@@ -1,0 +1,34 @@
+{
+    "name": "sayeed/application-installer",
+    "description": "Application Installer For User",
+    "keywords": ["installer"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Hasan Sayeed",
+            "email": "jbhasan@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.0",
+        "doctrine/dbal": "^2.10",
+        "laravelcollective/html":"^6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sayeed\\ApplicationInstaller\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Sayeed\\ApplicationInstaller\\Providers\\ApplicationInstallerServiceProvider"
+            ]
+        }
+    },
+    "require-dev": {
+        "laravel/framework": "7.* | 8.*"
+    }
+}
