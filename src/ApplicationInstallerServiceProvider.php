@@ -13,10 +13,10 @@ class ApplicationInstallerServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->loadRoutesFrom(__DIR__ . 'routes/web.php');
-		$this->loadViewsFrom(__DIR__ . 'resources/views', 'sayeed-application_installer');
+        $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
+		$this->loadViewsFrom(__DIR__ . '/resources/views', 'sayeed-application_installer');
 		$this->publishes([
-			__DIR__ . 'public' => public_path('sayeed-application_installer'),
+			__DIR__ . '/public' => public_path('sayeed-application_installer'),
 		], 'public');
     }
 
