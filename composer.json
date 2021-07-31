@@ -22,7 +22,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Sayeed\\ApplicationInstaller\\Providers\\ApplicationInstallerServiceProvider"
+                "Sayeed\\ApplicationInstaller\\ApplicationInstallerServiceProvider"
             ]
         }
     },
