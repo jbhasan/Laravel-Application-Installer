@@ -140,7 +140,6 @@ class InstallController extends Controller
 				if (!$isFileCreated) {
 					throw new \Exception('Failed to create DOT ENV file');
 				}
-				$this->runMigration();
 				$isMigrated = $this->runMigration();
 				if (!$isMigrated) {
 					throw new \Exception('Failed to migrate');
@@ -185,9 +184,18 @@ class InstallController extends Controller
 			$request->db_password,
 			array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION));
 
-		$stmt = $dbh->query("CREATE DATABASE ".$request->db_database."");
-		if (intval($stmt->errorCode()) == 0) {
+		$stmt = $dbh->query("SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '".$request->db_database."'");
+		if ($stmt->fetchColumn()) {
+			$stmt2 = $dbh->query("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '".$request->db_database."'");
+			if ($stmt2->fetchColumn() > 0) {
+				return false;
+			}
 			return true;
+		} else {
+			$stmt = $dbh->query("CREATE DATABASE " . $request->db_database . "");
+			if (intval($stmt->errorCode()) == 0) {
+				return true;
+			}
 		}
 		return false;
 	}

@@ -25,6 +25,9 @@ php artisan vendor:publish --provider="Sayeed\ApplicationInstaller\ApplicationIn
 #### Step 3
 ![Installer Step 3](https://user-images.githubusercontent.com/20739060/127758127-6593fcd7-318b-43fb-a206-82addea8f9ab.png)
 
+#### Done
+![Installer Step 3](https://user-images.githubusercontent.com/20739060/127761499-240980cb-37af-47ed-a8de-f657c7cb257c.png)
+
 
 ## Credits
 
