@@ -141,22 +141,24 @@
             success: function (response) {
                 if (response.status === 'success') {
                     element.html(response.message).removeClass('button-danger').addClass('button-default');
-                    $.ajax({
-                        url: '/install/migrate',
-                        method: 'post',
-                        async: true,
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ @csrf_token() }}'
-                        },
-                        data: {},
-                        success: function (response) {
-                            if (response.status === 'success') {
-                                $(".wizard-form").html('<div class="wizard-header"><h3 class="heading" style="text-align: center;font-size: 45px;font-family: cursive;">Congratulations!</h3></div><div class="wizard-body" id="congratulations"><div class="box-body" style="text-align: center;font-size: 20px;font-family: cursive;">Your application setup is successfully done.<br>You can enjoy your application now, <a href="/home">click here</a></div></div>');
-                            } else {
-                                element.html(response.message).removeClass('button-default').addClass('button-danger');
+                    setTimeout(function () {
+                        $.ajax({
+                            url: '/install/migrate',
+                            method: 'post',
+                            async: true,
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ @csrf_token() }}'
+                            },
+                            data: {},
+                            success: function (response) {
+                                if (response.status === 'success') {
+                                    $(".wizard-form").html('<div class="wizard-header"><h3 class="heading" style="text-align: center;font-size: 45px;font-family: cursive;">Congratulations!</h3></div><div class="wizard-body" id="congratulations"><div class="box-body" style="text-align: center;font-size: 20px;font-family: cursive;">Your application setup is successfully done.<br>You can enjoy your application now, <a href="/home">click here</a></div></div>');
+                                } else {
+                                    element.html(response.message).removeClass('button-default').addClass('button-danger');
+                                }
                             }
-                        }
-                    });
+                        });
+                    }, 5000);
                 } else if (response.status === 'error2') {
                     element.html(response.message).removeClass('button-default').addClass('button-danger');
                 } else {
