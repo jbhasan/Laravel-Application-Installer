@@ -28,8 +28,6 @@ class InstallController extends Controller
 		config(['app.debug' => true]);
 		Artisan::call('config:clear');
 		Artisan::call('cache:clear');
-		Artisan::call('config:clear');
-		Artisan::call('cache:clear');
 		Artisan::call('route:clear');
 		Artisan::call('view:clear');
 		Artisan::call('optimize');
@@ -140,16 +138,12 @@ class InstallController extends Controller
 				if (!$isFileCreated) {
 					throw new \Exception('Failed to create DOT ENV file');
 				}
-				sleep(2);
-				$isMigrated = $this->runMigration();
-				if (!$isMigrated) {
-					throw new \Exception('Failed to migrate');
-				}
 			} catch (\Exception $exception) {
 				$this->deleteDatabase($request);
 				$this->deleteEnv();
 				return response(['status' => 'error', 'message' => $exception->getMessage()]);
 			}
+			return response(['status' => 'success', 'message' => 'Application Done. Migration is running...']);
 		}
 		return response($checkConnection->original);
 	}
@@ -160,6 +154,8 @@ class InstallController extends Controller
 			foreach ($dataArray as $key => $value) {
 				$this->writeNewEnvironmentFileWith(base_path('.env'), $key, $value);
 			}
+			Artisan::call('config:clear');
+			Artisan::call('cache:clear');
 		} catch (\Exception $exception) {
 			return false;
 		}
@@ -214,19 +210,18 @@ class InstallController extends Controller
 		return false;
 	}
 
-	protected function runMigration() {
+	public function runMigration() {
 		try {
 			Artisan::call('config:clear');
 			Artisan::call('cache:clear');
 			Artisan::call('route:clear');
 			Artisan::call('view:clear');
-			Artisan::call('optimize');
 
 			Artisan::call('migrate');
 		} catch (\Exception $exception) {
-			return false;
+			return response(['status' => 'error', 'message' => $exception->getMessage()]);
 		}
-		return true;
+		return response(['status' => 'success', 'message' => '']);
 	}
 
 	/**

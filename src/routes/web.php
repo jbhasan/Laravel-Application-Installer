@@ -17,3 +17,4 @@ Route::get('/install', [\Sayeed\ApplicationInstaller\Http\Controllers\InstallCon
 Route::post('/install/check-requirements', [\Sayeed\ApplicationInstaller\Http\Controllers\InstallController::class, 'checkServer']);
 Route::post('/install/check-connection', [\Sayeed\ApplicationInstaller\Http\Controllers\InstallController::class, 'checkConnection']);
 Route::post('/install/process', [\Sayeed\ApplicationInstaller\Http\Controllers\InstallController::class, 'process']);
+Route::post('/install/migrate', [\Sayeed\ApplicationInstaller\Http\Controllers\InstallController::class, 'runMigration']);
