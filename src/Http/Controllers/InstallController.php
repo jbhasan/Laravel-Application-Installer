@@ -61,7 +61,7 @@ class InstallController extends Controller
 		}
         $this->installSettings();
 
-		return view('installer.install');
+		return view('install');
     }
 
     public function checkServer()
@@ -92,7 +92,7 @@ class InstallController extends Controller
         
         $output['next'] = $output['php'] && $output['openssl'] && $output['pdo'] && $output['mbstring'] && $output['tokenizer'] && $output['xml'] && $output['curl'] && $output['zip'] && $output['gd'] && $output['storage_writable'] && $output['cache_writable'];
 
-        return view('installer.partials.check-requirements')
+        return view('partials.check-requirements')
             ->with(compact('output'));
     }
 
