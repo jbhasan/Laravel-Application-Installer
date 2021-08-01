@@ -18,6 +18,9 @@ class IsInstalled
 	{
 		$envPath = base_path('.env');
 		if (!file_exists($envPath)) {
+			if (in_array($request->path(), ['install', 'install/check-requirements', 'install/check-connection', 'install/process'])) {
+				return $next($request);
+			}
 			return redirect(url('/') . '/install');
 		}
 
