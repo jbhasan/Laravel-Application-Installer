@@ -140,6 +140,7 @@ class InstallController extends Controller
 				if (!$isFileCreated) {
 					throw new \Exception('Failed to create DOT ENV file');
 				}
+				sleep(2);
 				$isMigrated = $this->runMigration();
 				if (!$isMigrated) {
 					throw new \Exception('Failed to migrate');
