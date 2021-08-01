@@ -6,11 +6,11 @@
     <!-- Mobile Specific Metas -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <!-- Font-->
-    <link rel="stylesheet" type="text/css" href="{{ asset('/css/opensans-font.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('/css/montserrat-font.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ ('/vendor/sayeed/application_installer/css/opensans-font.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ ('/vendor/sayeed/application_installer/css/montserrat-font.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ ('/vendor/sayeed/application_installer/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css') }}">
     <!-- Main Style Css -->
-    <link rel="stylesheet" href="{{ asset('/css/style.css') }}"/>
+    <link rel="stylesheet" href="{{ ('/vendor/sayeed/application_installer/css/style.css') }}"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 </head>
 <body>
@@ -52,7 +52,7 @@
                                 <h3 class="heading">Application Setup</h3>
                             </div>
                             <div class="wizard-body" id="applicationSetup">
-                                @include('partials.application-setup')
+                                @include('application_installer::partials.application-setup')
                             </div>
                         </div>
                     </section>
@@ -70,7 +70,7 @@
                                 <h3 class="heading">Database Setup</h3>
                             </div>
                             <div class="wizard-body" id="databaseSetup">
-                                @include('partials.database-setup')
+                                @include('application_installer::partials.database-setup')
                             </div>
                         </div>
                     </section>
@@ -88,7 +88,7 @@
                                 <h3 class="heading">Confirm & Finalize</h3>
                             </div>
                             <div class="wizard-body" id="confirmFinalize">
-                                @include('partials.confirm-finalize')
+                                @include('application_installer::partials.confirm-finalize')
                             </div>
                         </div>
                     </section>
@@ -97,9 +97,9 @@
         </div>
     </div>
 </div>
-<script src="{{ asset('/js/jquery-3.3.1.min.js') }}"></script>
-<script src="{{ asset('/js/jquery.steps.js') }}"></script>
-<script src="{{ asset('/js/main.js') }}"></script>
+<script src="{{ ('/vendor/sayeed/application_installer/js/jquery-3.3.1.min.js') }}"></script>
+<script src="{{ ('/vendor/sayeed/application_installer/js/jquery.steps.js') }}"></script>
+<script src="{{ ('/vendor/sayeed/application_installer/js/main.js') }}"></script>
 <script>
     $(document).ready(function () {
         checkRequirements();
