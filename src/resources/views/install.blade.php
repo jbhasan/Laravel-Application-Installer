@@ -60,24 +60,6 @@
                     <div class="steps">
                         <p class="step-icon"><span>3</span></p>
                         <div class="step-text">
-                            <span class="step-inner-1">Database Setup</span>
-                            <span class="step-inner-2">Confirm Database Setup</span>
-                        </div>
-                    </div>
-                    <section>
-                        <div class="inner">
-                            <div class="wizard-header">
-                                <h3 class="heading">Database Setup</h3>
-                            </div>
-                            <div class="wizard-body" id="databaseSetup">
-                                @include('application_installer::partials.database-setup')
-                            </div>
-                        </div>
-                    </section>
-                    <!-- SECTION 4 -->
-                    <div class="steps">
-                        <p class="step-icon"><span>4</span></p>
-                        <div class="step-text">
                             <span class="step-inner-1">Confirm & Finalize</span>
                             <span class="step-inner-2">Confirm All Setup</span>
                         </div>
@@ -167,6 +149,14 @@
             }
         })
     });
+    $(document).on('change', 'input', function () {
+        $('#finalAppName').text($("#application_name").val());
+        $('#finalDbHost').text($("#db_host").val());
+        $('#finalDbPort').text($("#db_port").val());
+        $('#finalDbUser').text($("#db_username").val());
+        $('#finalDbPassword').text($("#db_password").val());
+        $('#finalDbName').text($("#db_database").val());
+    })
 </script>
 </body>
 </html>

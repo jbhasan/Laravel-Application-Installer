@@ -9,94 +9,94 @@ use Illuminate\Support\Str;
 
 class InstallController extends Controller
 {
-    /**
-     * Constructor
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->installSettings();
-    }
+	/**
+	 * Constructor
+	 *
+	 * @return void
+	 */
+	public function __construct()
+	{
+		$this->installSettings();
+	}
 
-    /**
-     * Initialize all install functions
-     *
-     */
-    private function installSettings()
-    {
-        config(['app.debug' => true]);
-        Artisan::call('config:clear');
-        Artisan::call('cache:clear');
+	/**
+	 * Initialize all install functions
+	 *
+	 */
+	private function installSettings()
+	{
+		config(['app.debug' => true]);
+		Artisan::call('config:clear');
+		Artisan::call('cache:clear');
 		Artisan::call('config:clear');
 		Artisan::call('cache:clear');
 		Artisan::call('route:clear');
 		Artisan::call('view:clear');
 		Artisan::call('optimize');
-    }
+	}
 
-    /**
-     * Check if project is already installed then show 404 error
-     *
-     */
-    private function isInstalled()
-    {
-        $envPath = base_path('.env');
-        if (file_exists($envPath)) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Installation
-     *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //Check for .env file
-        if ($this->isInstalled()) {
-        	return redirect('/home');
+	/**
+	 * Check if project is already installed then show 404 error
+	 *
+	 */
+	private function isInstalled()
+	{
+		$envPath = base_path('.env');
+		if (file_exists($envPath)) {
+			return true;
 		}
-        $this->installSettings();
+		return false;
+	}
+
+	/**
+	 * Installation
+	 *
+	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
+	 */
+	public function index()
+	{
+		//Check for .env file
+		if ($this->isInstalled()) {
+			return redirect('/home');
+		}
+		$this->installSettings();
 
 		return view('application_installer::install');
-    }
+	}
 
-    public function checkServer()
-    {
-        //Check for .env file
-        $this->isInstalled();
-        $this->installSettings();
+	public function checkServer()
+	{
+		//Check for .env file
+		$this->isInstalled();
+		$this->installSettings();
 
-        $output = [];
-        
-        //Check for php version
-        $output['php'] = PHP_MAJOR_VERSION >= 7 && PHP_MINOR_VERSION >=1;
-        $output['php_version'] = PHP_VERSION;
+		$output = [];
 
-        //Check for php extensions
-        $output['openssl'] = extension_loaded('openssl');
-        $output['pdo'] = extension_loaded('pdo');
-        $output['mbstring'] = extension_loaded('mbstring');
-        $output['tokenizer'] = extension_loaded('tokenizer');
-        $output['xml'] = extension_loaded('xml');
-        $output['curl'] = extension_loaded('curl');
-        $output['zip'] = extension_loaded('zip');
-        $output['gd'] = extension_loaded('gd');
+		//Check for php version
+		$output['php'] = PHP_MAJOR_VERSION >= 7 && PHP_MINOR_VERSION >=1;
+		$output['php_version'] = PHP_VERSION;
 
-        //Check for writable permission. storage and the bootstrap/cache directories should be writable by your web server
-        $output['storage_writable'] = is_writable(storage_path());
-        $output['cache_writable'] = is_writable(base_path('bootstrap/cache'));
-        
-        $output['next'] = $output['php'] && $output['openssl'] && $output['pdo'] && $output['mbstring'] && $output['tokenizer'] && $output['xml'] && $output['curl'] && $output['zip'] && $output['gd'] && $output['storage_writable'] && $output['cache_writable'];
+		//Check for php extensions
+		$output['openssl'] = extension_loaded('openssl');
+		$output['pdo'] = extension_loaded('pdo');
+		$output['mbstring'] = extension_loaded('mbstring');
+		$output['tokenizer'] = extension_loaded('tokenizer');
+		$output['xml'] = extension_loaded('xml');
+		$output['curl'] = extension_loaded('curl');
+		$output['zip'] = extension_loaded('zip');
+		$output['gd'] = extension_loaded('gd');
 
-        return view('application_installer::partials.check-requirements')
-            ->with(compact('output'));
-    }
+		//Check for writable permission. storage and the bootstrap/cache directories should be writable by your web server
+		$output['storage_writable'] = is_writable(storage_path());
+		$output['cache_writable'] = is_writable(base_path('bootstrap/cache'));
 
-    public function checkConnection(Request $request) {
+		$output['next'] = $output['php'] && $output['openssl'] && $output['pdo'] && $output['mbstring'] && $output['tokenizer'] && $output['xml'] && $output['curl'] && $output['zip'] && $output['gd'] && $output['storage_writable'] && $output['cache_writable'];
+
+		return view('application_installer::partials.check-requirements')
+			->with(compact('output'));
+	}
+
+	public function checkConnection(Request $request) {
 		try{
 			$dbh = new \PDO('mysql:host='.$request->db_host.':'.$request->db_port.';',
 				$request->db_username,
@@ -105,18 +105,22 @@ class InstallController extends Controller
 
 			$stmt = $dbh->query("SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '".$request->db_database."'");
 			if ($stmt->fetchColumn()) {
-				return response(['status' => 'error2', 'message' => 'Database already exists. Please try another.']);
+				$stmt2 = $dbh->query("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '".$request->db_database."'");
+				if ($stmt2->fetchColumn() > 0) {
+					return response(['status' => 'error2', 'message' => 'Database exists and its not empty']);
+				}
+				//return response(['status' => 'error2', 'message' => 'Database already exists. Please try another.']);
 			}
 			return response(['status' => 'success', 'message' => 'Successfully Connected']);
 		}
 		catch(\PDOException $ex){
-			return response(['status' => 'error', 'message' => 'Unable to connect']);
+			return response(['status' => 'error', 'message' => $ex->getMessage()]);
 		}
 	}
 
-    public function process(Request $request) {
-    	$this->installSettings();
-    	$checkConnection  = $this->checkConnection($request);
+	public function process(Request $request) {
+		$this->installSettings();
+		$checkConnection  = $this->checkConnection($request);
 		if ($checkConnection->original['status'] == 'success') {
 			try {
 				$envExample['APP_NAME'] = Str::slug($request->application_name);
@@ -151,13 +155,13 @@ class InstallController extends Controller
 	}
 
 	protected function createEnvFile($dataArray) {
-    	try {
-    		copy(base_path('.env.example'), base_path('.env'));
+		try {
+			copy(base_path('.env.example'), base_path('.env'));
 			foreach ($dataArray as $key => $value) {
 				$this->writeNewEnvironmentFileWith(base_path('.env'), $key, $value);
 			}
 		} catch (\Exception $exception) {
-    		return false;
+			return false;
 		}
 		return true;
 	}
@@ -202,7 +206,7 @@ class InstallController extends Controller
 	}
 
 	protected function runMigration() {
-    	try {
+		try {
 			Artisan::call('config:clear');
 			Artisan::call('cache:clear');
 			Artisan::call('route:clear');
@@ -211,7 +215,7 @@ class InstallController extends Controller
 
 			Artisan::call('migrate');
 		} catch (\Exception $exception) {
-    		return false;
+			return false;
 		}
 		return true;
 	}
