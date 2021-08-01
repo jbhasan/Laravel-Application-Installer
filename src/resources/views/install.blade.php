@@ -140,7 +140,8 @@
             data: $(".form-register").serialize(),
             success: function (response) {
                 if (response.status === 'success') {
-                    element.html(response.message).removeClass('button-danger').addClass('button-default');
+                    $(".wizard-form").html('<div class="wizard-header"><h3 class="heading" style="text-align: center;font-size: 45px;font-family: cursive;">Congratulations!</h3></div><div class="wizard-body" id="congratulations"><div class="box-body" style="text-align: center;font-size: 20px;font-family: cursive;">Your application setup is successfully done.<br>You can enjoy your application now.</div></div>');
+                    //element.html(response.message).removeClass('button-danger').addClass('button-default');
                 } else if (response.status === 'error2') {
                     element.html(response.message).removeClass('button-default').addClass('button-danger');
                 } else {
