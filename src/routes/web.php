@@ -16,5 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/install', [\Sayeed\ApplicationInstaller\Http\Controllers\InstallController::class, 'index']);
 Route::post('/install/check-requirements', [\Sayeed\ApplicationInstaller\Http\Controllers\InstallController::class, 'checkServer']);
 Route::post('/install/check-connection', [\Sayeed\ApplicationInstaller\Http\Controllers\InstallController::class, 'checkConnection']);
+Route::post('/install/check-smtp-connection', [\Sayeed\ApplicationInstaller\Http\Controllers\InstallController::class, 'checkSmtpConnection']);
 Route::post('/install/process', [\Sayeed\ApplicationInstaller\Http\Controllers\InstallController::class, 'process']);
 Route::post('/install/migrate', [\Sayeed\ApplicationInstaller\Http\Controllers\InstallController::class, 'runMigration']);

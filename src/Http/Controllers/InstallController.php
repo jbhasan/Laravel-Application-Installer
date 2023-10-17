@@ -69,9 +69,27 @@ class InstallController extends Controller
 		$this->installSettings();
 
 		$output = [];
+		$composer = json_decode(file_get_contents(base_path('composer.json')));
+		$output['required_php'] = $composer->require->php;
+		$required_php = explode('|', $composer->require->php);
+		$output['php'] = false;
+		foreach($required_php as $required_php_version) {
+			$version_exploded = substr($required_php_version, 0, 1);
+			if(!is_int($version_exploded)) {
+				$required_version = substr($required_php_version, 1);
+				if(in_array($version_exploded, ['^', '>']) && PHP_VERSION > $required_version) {
+					$output['php'] = true;
+				}
+			} else {
+				if(PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION == $required_php_version) {
+					$output['php'] = true;
+				}
+			}
+		}
+
+		// dd($output['php']);
 
 		//Check for php version
-		$output['php'] = PHP_MAJOR_VERSION >= 7 && PHP_MINOR_VERSION >=1;
 		$output['php_version'] = PHP_VERSION;
 
 		//Check for php extensions
@@ -115,6 +133,20 @@ class InstallController extends Controller
 			return response(['status' => 'error', 'message' => $ex->getMessage()]);
 		}
 	}
+	public function checkSmtpConnection(Request $request) {
+		try{
+			$transport = new \Swift_SmtpTransport($request->mail_host, $request->mail_port, $request->mail_encryption);
+			$transport->setUsername($request->mail_username);
+			$transport->setPassword($request->mail_password);
+			$mailer = new \Swift_Mailer($transport);
+			$mailer->getTransport()->start();
+			return response(['status' => 'success', 'message' => 'Successfully Connected']);
+		} catch (\Swift_TransportException $e) {
+			return response(['status' => 'error', 'message' => $e->getMessage()]);
+		} catch (\Exception $e) {
+		  return response(['status' => 'error', 'message' => $e->getMessage()]);
+		}
+	}
 
 	public function process(Request $request) {
 		$this->installSettings();
@@ -122,13 +154,18 @@ class InstallController extends Controller
 		if ($checkConnection->original['status'] == 'success') {
 			try {
 				$envExample['APP_NAME'] = Str::slug($request->application_name);
-				$envExample['APP_KEY'] = config('app.key');
+				$envExample['APP_URL'] = $request->application_url;
+				$envExample['ASSET_URL'] = $request->asset_url;
 				$envExample['DB_HOST'] = $request->db_host;
 				$envExample['DB_PORT'] = $request->db_port;
 				$envExample['DB_DATABASE'] = $request->db_database;
 				$envExample['DB_USERNAME'] = $request->db_username;
 				$envExample['DB_PASSWORD'] = $request->db_password;
-
+				$envExample['MAIL_HOST'] = $request->mail_host;
+				$envExample['MAIL_PORT'] = $request->mail_port;
+				$envExample['MAIL_ENCRYPTION'] = $request->mail_encryption;
+				$envExample['MAIL_USERNAME'] = $request->mail_username;
+				$envExample['MAIL_PASSWORD'] = $request->mail_password;
 
 				$isDatabaseCreated = $this->createDatabase($request);
 				if (!$isDatabaseCreated) {
@@ -154,6 +191,7 @@ class InstallController extends Controller
 			foreach ($dataArray as $key => $value) {
 				$this->writeNewEnvironmentFileWith(base_path('.env'), $key, $value);
 			}
+			Artisan::call('key:generate');
 			Artisan::call('config:clear');
 			Artisan::call('cache:clear');
 		} catch (\Exception $exception) {

@@ -18,7 +18,11 @@ class IsInstalled
 	{
 		$envPath = base_path('.env');
 		if (!file_exists($envPath)) {
-			if (in_array($request->path(), ['install', 'install/check-requirements', 'install/check-connection', 'install/process', 'install/migrate'])) {
+			$pathinfo = pathinfo($request->path());
+			if (isset($pathinfo['extension']) && in_array($pathinfo['extension'], ['css', 'js', 'jpg', 'jpeg', 'png'])) {
+				return $next($request);
+			}
+			if (in_array($request->path(), ['install', 'install/check-requirements', 'install/check-connection', 'install/process', 'install/migrate', 'install/check-smtp-connection'])) {
 				return $next($request);
 			}
 			return redirect(url('/') . '/install');

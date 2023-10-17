@@ -6,11 +6,11 @@
     <!-- Mobile Specific Metas -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <!-- Font-->
-    <link rel="stylesheet" type="text/css" href="{{ ('/vendor/sayeed/application_installer/css/opensans-font.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ ('/vendor/sayeed/application_installer/css/montserrat-font.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ ('/vendor/sayeed/application_installer/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendor/sayeed/application_installer/css/opensans-font.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('/vendor/sayeed/application_installer/css/montserrat-font.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('/vendor/sayeed/application_installer/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css') }}">
     <!-- Main Style Css -->
-    <link rel="stylesheet" href="{{ ('/vendor/sayeed/application_installer/css/style.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('/vendor/sayeed/application_installer/css/style.css') }}"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 </head>
 <body>
@@ -53,6 +53,42 @@
                             </div>
                             <div class="wizard-body" id="applicationSetup">
                                 @include('application_installer::partials.application-setup')
+                            </div>
+                        </div>
+                    </section>
+					<!-- SECTION 3 -->
+                    <div class="steps">
+                        <p class="step-icon"><span>3</span></p>
+                        <div class="step-text">
+                            <span class="step-inner-1">Database Setup</span>
+                            <span class="step-inner-2">Database Configuration</span>
+                        </div>
+                    </div>
+                    <section>
+                        <div class="inner">
+                            <div class="wizard-header">
+                                <h3 class="heading">Database Setup</h3>
+                            </div>
+                            <div class="wizard-body" id="databaseSetup">
+                                @include('application_installer::partials.database-setup')
+                            </div>
+                        </div>
+                    </section>
+					<!-- SECTION 4 -->
+                    <div class="steps">
+                        <p class="step-icon"><span>4</span></p>
+                        <div class="step-text">
+                            <span class="step-inner-1">Email Setup</span>
+                            <span class="step-inner-2">SMTP Configuration</span>
+                        </div>
+                    </div>
+                    <section>
+                        <div class="inner">
+                            <div class="wizard-header">
+                                <h3 class="heading">Email Setup</h3>
+                            </div>
+                            <div class="wizard-body" id="emailSetup">
+                                @include('application_installer::partials.smtp-setup')
                             </div>
                         </div>
                     </section>
@@ -125,6 +161,33 @@
             }
         })
     });
+	$(document).on('click', "#btnCheckSMTP", function () {
+        var element = $(this);
+        element.html('Checking...');
+        $.ajax({
+            url: '/install/check-smtp-connection',
+            method: 'post',
+            async: true,
+            data: {
+                _token: '{{ @csrf_token() }}',
+                mail_host: $("#mail_host").val(),
+                mail_port: $("#mail_port").val(),
+                mail_username: $("#mail_username").val(),
+                mail_password: $("#mail_password").val(),
+                mail_encryption: $("#mail_encryption").val(),
+                mail_from: $("#mail_from").val(),
+            },
+            success: function (response) {
+                if (response.status === 'success') {
+                    element.html(response.message).removeClass('button-danger').addClass('button-default');
+                } else if (response.status === 'error2') {
+                    element.html(response.message).removeClass('button-default').addClass('button-danger');
+                } else {
+                    element.html(response.message).removeClass('button-default').addClass('button-danger');
+                }
+            }
+        })
+    });
 
     $(document).on('click', "a[href='#finish']", function () {
         var element = $(this);
@@ -169,11 +232,19 @@
     });
     $(document).on('change', 'input', function () {
         $('#finalAppName').text($("#application_name").val());
+        $('#finalAppUrl').text($("#application_url").val());
+        $('#finalAssetUrl').text($("#asset_url").val());
         $('#finalDbHost').text($("#db_host").val());
         $('#finalDbPort').text($("#db_port").val());
         $('#finalDbUser').text($("#db_username").val());
         $('#finalDbPassword').text($("#db_password").val());
         $('#finalDbName').text($("#db_database").val());
+
+		$('#finalMailHost').text($("#mail_host").val());
+        $('#finalMailPort').text($("#mail_port").val());
+        $('#finalMailEncryption').text($("#mail_encryption").val());
+        $('#finalMailUser').text($("#mail_username").val());
+        $('#finalMailPassword').text($("#mail_password").val());
     })
 </script>
 </body>

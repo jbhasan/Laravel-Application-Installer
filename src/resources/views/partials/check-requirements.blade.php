@@ -1,7 +1,7 @@
 <div class="box-body">
     <table class="table">
         <tr>
-            <td>PHP >= 7.1</td>
+            <td>PHP  {{$output['required_php']}} <small style="padding:1px 3px;border-radius:5px;background:#32a7d7;color:white;">Found {{ $output['php_version'] }}</small></td>
             <td>
                 @if($output['php'])
                     <i class="fa fa-check-circle-o text-success" aria-hidden="true"></i>
